@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="MovieAgent: Automated Movie Generation via Multi-Agent CoT Planning">
+  <meta property="og:title" content="MovieAgent"/>
+  <meta property="og:description" content="Integrating Spatial Knitting Attentions to Embed High-Level and Fidelity-Rich Conditions in Diffusion Models"/>
+  <meta property="og:url" content="https://github.com/HelloVision/HelloMeme"/>
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
+  <meta property="og:image" content="static/image/your_banner_image.png" />
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+
+
+  <meta name="twitter:title" content="MovieAgent">
+  <meta name="twitter:description" content="Integrating Spatial Knitting Attentions to Embed High-Level and Fidelity-Rich Conditions in Diffusion Models">
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
+  <meta name="twitter:image" content="static/images/your_twitter_banner_image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Keywords for your paper to be indexed by-->
+  <meta name="keywords" content="MovieAgent">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <title>MovieAgent</title>
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+  rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/index.js"></script>
+</head>
+
+
+<head>
+  <style>
+      /* 定义表格样式 */
+      table {
+          margin: 0 auto; /* 将表格水平居中 */
+          border-collapse: collapse; /* 边框合并，可选 */
+      }
+      
+      /* 定义表格2样式 */
+      #table1 {
+          margin: 0 auto; /* 将表格2水平居中 */
+      }
+      /* 定义表格2的单元格样式 */
+      #table1 td {
+          width: 177px; /* 设置表格2的单元格宽度 */
+          text-align: center; /* 文本居中 */
+          border: 1px solid black; /* 边框样式，可选 */
+      }
+      
+      /* 定义表格2样式 */
+      #table2 {
+          margin: 0 auto; /* 将表格2水平居中 */
+      }
+      /* 定义表格2的单元格样式 */
+      #table2 td {
+          width: 250px; /* 设置表格2的单元格宽度 */
+          text-align: center; /* 文本居中 */
+          border: 1px solid black; /* 边框样式，可选 */
+      }
+
+
+      /* 定义表格2样式 */
+      #table5 {
+          margin: 0 auto; /* 将表格2水平居中 */
+      }
+      /* 定义表格2的单元格样式 */
+      #table5 td {
+          width: 500px; /* 设置表格2的单元格宽度 */
+          text-align: center; /* 文本居中 */
+          border: 1px solid black; /* 边框样式，可选 */
+      }
+
+      #table3 {
+          margin: 0 auto; 
+      }
+      #table3 td {
+          width: 250px; 
+          text-align: center; 
+          border: 1px solid black; 
+      }
+      
+
+      .container1 {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px; /* Space between script and character bank */
+            flex-wrap: wrap; /* Ensures responsiveness */
+            padding: 20px;
+        }
+
+
+      .container2 {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px; /* Space between script and character bank */
+            flex-wrap: wrap; /* Ensures responsiveness */
+            padding: 10px;
+        }
+
+        .script-intro2 {
+            max-width: 380px;
+            font-size: 0.9em;
+            line-height: 1.4;
+            text-align: left;
+        }
+
+        .script-intro2 h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .script-intro {
+            max-width: 420px;
+            font-size: 0.9em;
+            line-height: 1.4;
+            text-align: left;
+        }
+
+        .script-intro h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .character-bank {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            text-align: center;
+        }
+
+        .character {
+            width: 143px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .character1 {
+            width: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .character1 img {
+            width: 100px;  /* Fixed width */
+            height: 150px; /* Fixed height */
+            object-fit: cover; /* Ensures the image fills the area without distortion */
+            border-radius: 10px; /* Optional rounded corners */
+        }
+
+        .character1-name {
+            margin-top: 5px;
+            font-size: 1.2em;
+        }
+
+        .character img {
+            width: 100px;  /* Fixed width */
+            height: 150px; /* Fixed height */
+            object-fit: cover; /* Ensures the image fills the area without distortion */
+            border-radius: 10px; /* Optional rounded corners */
+        }
+
+
+        .character audio {
+            margin-top: 1px;
+            width: 100%;
+        }
+
+        .character-name {
+            margin-top: 5px;
+            font-size: 1.2em;
+        }
+        
+        .character-caption {
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-top: 1px;
+        }
+
+        .container3 {
+            text-align: center;
+            font-size: 1.2em;
+            margin-top: 1px;
+        }
+
+        .arrow-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 1px;
+        }
+
+        .arrow-label {
+            font-size: 1em;
+            font-style: italic;
+            white-space: nowrap; /* Prevents text from breaking into a new line */
+        }
+
+        @media (max-width: 800px) {
+            .container1 {
+                flex-direction: column;
+                align-items: center;
+            }
+            .script-intro {
+                max-width: 100%;
+                text-align: center;
+            }
+        }
+  </style>
+</head>
+
+
+
+<body>
+
+
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">MovieAgent: Automated Movie Generation via Multi-Agent CoT Planning</h1>
+            <div class="is-size-5 publication-authors">
+                <!-- Paper authors -->
+                <span class="author-block">
+                  <a href="https://weijiawu.github.io/" target="_blank">Weijia Wu</a>
+                </span>,
+                <span class="author-block">
+                  <a href="https://zeyu-zhu.github.io/webpage/" target="_blank">Zeyu Zhu</a>
+                </span>,
+                <span class="author-block">
+                  <a href="https://sites.google.com/view/showlab" target="_blank">Mike Zheng Shou</a>
+                </span>
+                  <span class="author-block">
+                    </span>
+                    </div>
+  
+                    <div class="is-size-5 publication-authors">
+                      <span class="author-block"> Show Lab, National University of Singapore </span>
+                    </div>
+  
+                    <div class="column has-text-centered">
+                      <div class="publication-links"> 
+                        <!-- Arxiv PDF link -->
+                        <span class="link-block">
+                          <a href="https://github.com/showlab/MovieAgent" target="_blank"
+                          class="external-link button is-normal is-rounded is-dark">
+                          <span class="icon">
+                            <i class="fas fa-file-pdf"></i>
+                          </span>
+                          <span>Technical Report</span>
+                        </a>
+                      </span> 
+  
+                    <!-- Github link -->
+                    <span class="link-block">
+                      <a href="https://github.com/showlab/MovieAgent" target="_blank"
+                      class="external-link button is-normal is-rounded is-dark">
+                      <span class="icon">
+                        <i class="fab fa-github"></i>
+                      </span>
+                      <span>Code</span>
+                    </a>
+                  </span> 
+  
+                  <!-- ArXiv abstract Link -->
+                  <span class="link-block">
+                    <a href=" " target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>arXiv</span> 
+                  </a>
+                </span>
+              </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+<!-- Teaser video-->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video poster="" id="title" autoplay controls muted loop height="100%">
+        <!-- Your video here -->
+        <source src="static/videos/demo_resize.mp4"
+        type="video/mp4">
+      </video>
+
+      <p class="content has-text-centered" style="font-size: 24px;">
+        <strong>MovieAgent: Convert your idea to a Movie!</strong>
+    </p>    
+    </div>
+  </div>
+</section>
+<!-- End teaser video -->
+
+
+<hr style="border: none; border-top: 2px solid gray; width: 100%; margin: 20px 0;">
+
+
+<!-- Dataset -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div>
+        <h2 class="title is-3">Pipeline for MovieAgent</h2>
+        <div class="content has-text-justified">
+          <img src="static/images/structure.png" alt="Network Structure"/>
+          <p class="content has-text-left">
+            <strong>The Overall Pipeline for MovieAgent.</strong> The proposed framework employs a hierarchical CoT reasoning process with director,
+            scene plan, and shot plan agents to automate long-form movie generation.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Dataset -->
+
+<hr style="border: none; border-top: 2px solid gray; width: 100%; margin: 20px 0;">
+
+
+<!-- Keyframe Generate -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Task 1: Script Synopsis to Keyframe/StoryBoard Generation</h2>
+      <div class="content has-text-justified">
+        <img src="static/images/keyframeGen.png" alt="Text to Keyframe/Storyboard Generation"/>
+        <p class="content has-text-left">
+          With the hierarchical data MovieAgent provide, existing methods can partially reconstruct a coherent storyline, maintaining consistent character identities and relationships.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Keyframe Generate -->
+
+
+<hr style="border: none; border-top: 2px solid gray; width: 100%; margin: 20px 0;">
+
+<!--  Task 2: Script Synopsis to Movie Generation -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <!-- Paper video. -->
+      <h2 class="title is-3"> Task 2: Script Synopsis to Movie Generation</h2>
+
+          <div class="container1">
+            <!-- Script Introduction -->
+            <div class="script-intro">
+                <p>
+                    Anna, Elsa, Kristoff, Olaf, and Mattias embark on a journey to uncover the truth behind the mysterious voice calling Elsa. 
+                    As they travel to the enchanted forest, they discover that the past holds secrets about their kingdom and Elsa’s powers. 
+                    Mattias, a loyal Arendelle soldier trapped in the forest for years, helps them navigate the tensions between Arendelle and the Northuldra people…
+                </p>
+                <h2 style="text-align: center; font-size: 1.3em;">Script Synopsis/Raw Story</h2>
+        
+            </div>
+        
+            <!-- Character Bank -->
+            <div class="character-bank">
+                <!-- Character 1 -->
+                <div class="character1">
+                    <img src="static/images/Elsa.png" alt="Elsa">
+                    <div class="character-name">Elsa</div>
+                </div>
+        
+                <!-- Character 2 -->
+                <div class="character1">
+                    <img src="static/images/Anna.png" alt="Anna">
+                    <div class="character-name">Anna</div>
+                </div>
+        
+                <!-- Character 3 -->
+                <div class="character1">
+                    <img src="static/images/Kristoff.png" alt="Kristoff">
+                    <div class="character-name">Kristoff</div>
+                </div> 
+
+                <!-- Character 3 -->
+                <div class="character1">
+                  <img src="static/images/Mattias.png" alt="Mattias">
+                  <div class="character-name">Mattias</div>
+              </div> 
+
+            </div>
+        
+            <!-- Caption below Character Bank -->
+          
+        
+          <div class="container3">
+            <!-- Arrow with Label -->
+            <div class="arrow-container">
+              <div class="character-caption">
+                <span style="color: red;">Input</span>: Script Synopsis and Character Bank (Image, Name)
+              </div>
+              <svg width="50" height="80">
+                  <line x1="25" y1="0" x2="25" y2="60" stroke="black" stroke-width="15"/>
+                  <polygon points="10,60 25,80 40,60" fill="black"/>
+              </svg>
+              <div class="arrow-label">Process with MovieAgent (GPT4-o + ROICtrl + Kling 1.6)</div>
+              <div class="character-caption">
+                <span style="color: red;">Output</span>: Multi-scene, multi-shot videos with a coherent narrative.
+              </div>
+          </div>
+        </div>
+
+        <!-- <p style="font-size: 1.5em; text-align: center; font-weight: bold;">Scene 1</p> -->
+        
+        <!-- <div class="container"> -->
+          <table class="center" id="table2">
+
+            <tr>
+              <td colspan="4" style="text-align: center">
+                  <div style="text-align: center; font-size: 1.3em; font-weight: bold;">
+                    Sub-Script 1: The Call and the Journey Begins
+                  </div>
+                  <div style="text-align: left; font-size: 0.8em; margin-top: 1px;">
+                      <b>Plot:</b> Anna, Elsa, Kristoff, and Olaf embark on a journey toward a mysterious voice calling Elsa. Along the way, supernatural weather linked to Elsa’s emotions challenges them. In the enchanted forest, they encounter frozen relics of a past conflict between Arendelle and the Northuldra. Elsa’s magic calms elemental spirits blocking their path, and they uncover cryptic symbols tied to Elsa’s childhood memories.<br>
+                      <b>Involving Characters:</b> Elsa, Anna, Kristoff, and Olaf.<br>
+                      <b>Emotional Tone:</b> Curiosity and determination.<br>
+                      <b>Key Themes</b>: Adventure, discovery, and mystery.
+                  </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="text-align:center">
+                
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 1 - Shot 1
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Elsa stands alone in her ice dress, listening to a mysterious, ethereal voice. Her expression is a mix of curiosity and concern as she looks towards the distant horizon.<br>
+                    <b>Involving Characters:</b> Elsa.<br>
+                    <b>Shot Type:</b> Close-up. <br>
+                    <b>Camera Movement:</b> Static shot. <br>
+                    <b>Subtitle:</b> {Elsa:I can hear it again... the voice. It's calling me.}
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 1 - Shot 3
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> A wide shot reveals the enchanted forest bathed in ethereal light. Glowing plants and shimmering air create a magical atmosphere, emphasizing the vastness and wonder of the setting.<br>
+                    <b>Involving Characters:</b> <br>
+                    <b>Shot Type:</b> Wide shot. <br>
+                    <b>Camera Movement:</b> Static shot. <br>
+                    <b>Subtitle:</b> {}
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 1 - Shot 4
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Anna and Elsa continue their conversation, now focusing on the maps. They lean over a large map, pointing out key locations and discussing the route.<br>
+                    <b>Involving Characters:</b> Elsa, Anna.<br>
+                    <b>Shot Type:</b> Medium close-up. <br>
+                    <b>Camera Movement:</b> Dolly-in. <br>
+                    <b>Subtitle:</b> {Anna: This path should lead us to the mountains. Elsa: Let's mark it clearly.}
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 1 - Shot 6
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Anna, Elsa and Kristoff set out through a dense forest, their travel gear visible. Wide shot emphasizes the vast and challenging landscape they face.<br>
+                    <b>Involving Characters:</b> Elsa, Anna, Kristoff.<br>
+                    <b>Shot Type:</b> Wide shot. <br>
+                    <b>Camera Movement:</b> Static shot. <br>
+                    <b>Subtitle:</b> {Anna: Here we go, everyone. Stick together. Kristoff: Stay close, it's easy to get lost here.}
+                </div>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td>
+                <video src="./static/videos/Sub-Script_1-Scene_1-Shot_1.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+              
+              <td>
+                <video src="./static/videos/Sub-Script_1-Scene_1-Shot_3.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+              <td>
+                <video src="./static/videos/Sub-Script_1-Scene_1-Shot_4.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+              <td>
+                <video src="./static/videos/Sub-Script_1-Scene_2-Shot_1_keling.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td style="text-align:center">
+                
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 1 - Shot 7
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> A tracking shot of Elsa and Kristoff leading the way into the forest. The forest is dense and mysterious, with tall trees and a thick canopy. The sky is partly cloudy, casting dappled sunlight on the ground. <br>
+                    <b>Involving Characters:</b> Elsa, Kristoff.<br>
+                    <b>Shot Type:</b> Tracking shot. <br>
+                    <b>Camera Movement:</b> Dolly-in. <br>
+                    <b>Subtitle:</b> {Elsa: Let‘s go, everyone. Stay close. Kristoff: Right behind you, Elsa.}
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 2 - Shot 1
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Wind whips the hair of Anna across faces, prismatic storm light slicing diagonally through frame.<br>
+                    <b>Involving Characters: Anna</b> <br>
+                    <b>Shot Type:</b> Medium Shot. <br>
+                    <b>Camera Movement:</b> Handheld shaky pan following debris. <br>
+                    <b>Subtitle:</b> {}
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 2 - Shot 4
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Wide shot of Anna and Elsa surrounded by the ancient trees and historical artifacts.<br>
+                    <b>Involving Characters:</b> Elsa, Anna.<br>
+                    <b>Shot Type:</b> Wide Shot. <br>
+                    <b>Camera Movement:</b> Pull away. <br>
+                    <b>Subtitle:</b> {Anna: Understanding the past is key to moving forward. Elsa: We must learn from these stories.}
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 2 - Shot 5
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Elsa and Anna stand in awe as mystical lights dance around them, casting ethereal glows and revealing ancient symbols.<br>
+                    <b>Involving Characters:</b> Elsa, Anna.<br>
+                    <b>Shot Type:</b> Close-up. <br>
+                    <b>Camera Movement:</b> Slow-motion. <br>
+                    <b>Subtitle:</b> {Elsa: Do you see that? It's like they're speaking to us. Anna: I've never seen anything like it.}
+                </div>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td>
+                <video src="./static/videos/Sub-Script_1-Scene_1-Shot_7.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+              
+              <td>
+                <video src="./static/videos/Sub-Script_1-Scene_2-Shot_1.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+              <td>
+                <video src="./static/videos/Sub-Script_1-Scene_2-Shot_4.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+              <td>
+                <video src="./static/videos/Sub-Script_1-Scene_2-Shot_5.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+            </tr>
+
+            <tr>
+              <td colspan="4" style="text-align: center">
+                  <div style="text-align: center; font-size: 1.3em; font-weight: bold;">
+                    Sub-Script 2: Unraveling the Past
+                  </div>
+                  <div style="text-align: left; font-size: 0.8em; margin-top: 1px;">
+                      <b>Plot:</b> Mattias, a long-trapped Arendelle soldier, explains the unresolved conflict between Arendelle and Northuldra. Elsa, driven by the voice, ventures alone to a glacial cavern, where she learns she is the Fifth Spirit, a bridge between humans and magic. Meanwhile, Anna leads the group to follow Elsa, proving her leadership despite Kristoff’s concerns.<br>
+                      <b>Involving Characters:</b> Elsa, Anna, Kristoff, and Olaf.<br>
+                      <b>Emotional Tone:</b> Tension and revelation.<br>
+                      <b>Key Themes</b>: History, responsibility, and leadership.
+                  </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="text-align:center">
+                
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 3 - Shot 1
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Close-up of Mattias as he explains the historical tensions between Arendelle and the Northuldra, his expression serious and informative.<br>
+                    <b>Involving Characters:</b> Mattias.<br>
+                    <b>Shot Type:</b> Close-up. <br>
+                    <b>Camera Movement:</b> Static shot. <br>
+                    <b>Subtitle:</b> {Mattias: The roots of our conflict lie in misunderstandings and past decisions.}
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 3 - Shot 3
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Close-up of Mattias and Elsa as they facilitate the dialogue, their expressions hopeful and focused, working towards reconciliation.<br>
+                    <b>Involving Characters: Elsa, Mattias.</b> <br>
+                    <b>Shot Type:</b> Close-up. <br>
+                    <b>Camera Movement:</b> Gentle push-in. <br>
+                    <b>Subtitle:</b> {Mattias: By acknowledging our past, we can build a better future. Elsa: Together, we can find common ground.}
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 3 - Shot 4
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Elsa and Mattias stop to consult the map and compass. Elsa looks determined but concerned. Mattias points out the next part of the journey.<br>
+                    <b>Involving Characters:</b> Elsa, Mattias.<br>
+                    <b>Shot Type:</b> Medium shot. <br>
+                    <b>Camera Movement:</b> Slow zoom out. <br>
+                    <b>Subtitle:</b> {Elsa: What's the next step?, Mattias: We need to cross the river up ahead. It's going to be tough, but we can do it.}
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 4 - Shot 1
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Elsa, preparing to part ways with Anna, follows the call of the voice and ventures alone into a glacial cavern.<br>
+                    <b>Involving Characters:</b> Elsa, Anna.<br>
+                    <b>Shot Type:</b> Wide shot. <br>
+                    <b>Camera Movement:</b> Static shot. <br>
+                    <b>Subtitle:</b> {Elsa: Maybe I should leave. I'm being summoned.}
+                </div>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td>
+                <video src="./static/videos/Sub-Script_2-Scene_3-Shot_1.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+              
+              <td>
+                <video src="./static/videos/Sub-Script_2-Scene_3-Shot_3.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+              <td>
+                <video src="./static/videos/Sub-Script_2-Scene_3-Shot_4.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+              <td>
+                <video src="./static/videos/Sub-Script_2-Scene_4-Shot_1.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td style="text-align:center">
+                
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 5 - Shot 1
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Close-up of Elsa's face as she holds the revealing artifact, then sets off alone to a glacial cavern.<br>
+                    <b>Involving Characters:</b> Elsa.<br>
+                    <b>Shot Type:</b> Close-up. <br>
+                    <b>Camera Movement:</b> Static shot. <br>
+                    <b>Subtitle:</b> {Elsa: I understand now. All of it makes sense.}
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 5 - Shot 2
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Elsa standing in the clearing, surrounded by swirling elemental forces. The camera beautifully captures the dynamic movement of the elements.<br>
+                    <b>Involving Characters: Elsa.</b> <br>
+                    <b>Shot Type:</b> Aerial shot. <br>
+                    <b>Camera Movement:</b> Dynamic movement capturing the swirling elements. <br>
+                    <b>Subtitle:</b> {}
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 6 - Shot 2
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Group shot of Anna and Kristoff sharing a meal with representatives, smiles and nods exchanged as they reach a moment of understanding.<br>
+                    <b>Involving Characters:</b> Kristoff, Anna.<br>
+                    <b>Shot Type:</b> Group Shot. <br>
+                    <b>Camera Movement:</b> Static Shot.<br>
+                    <b>Subtitle:</b> {Anna: We can learn so much from each other. Kristoff: This feels like a new beginning.}
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 7 - Shot 1
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> During the expedition, Anna proves her leadership skills, while Kristoff, despite his concerns, gradually comes to accept it.<br>
+                    <b>Involving Characters:</b> Kristoff, Anna.<br>
+                    <b>Shot Type:</b> Group Shot. <br>
+                    <b>Camera Movement:</b> Static shot. <br>
+                    <b>Subtitle:</b> {Anna: We must go find Elsa. Kristoff: You're right.}
+                </div>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td>
+                <video src="./static/videos/Sub-Script_2-Scene_5-Shot_1.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+              
+              <td>
+                <video src="./static/videos/Sub-Script_2-Scene_5-Shot_2.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+              <td>
+                <video src="./static/videos/Sub-Script_2-Scene_6-Shot_2.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+              <td>
+                <video src="./static/videos/Sub-Script_2-Scene_7-Shot_1.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td colspan="4" style="text-align: center">
+                  <div style="text-align: center; font-size: 1.3em; font-weight: bold;">
+                    Sub-Script 3: Truth and Resolution
+                  </div>
+                  <div style="text-align: left; font-size: 0.8em; margin-top: 1px;">
+                      <b>Plot:</b> Elsa freezes after sending an ice message to Anna, who realizes she must destroy the dam to restore balance. Elsa revives as the forest’s protector, and the sisters choose separate paths. Elsa with the Northuldra, Anna as Arendelle’s queen.<br>
+                      <b>Involving Characters:</b> Elsa, Anna, Kristoff.<br>
+                      <b>Emotional Tone:</b>Sacrifice and resolution.<br>
+                      <b>Key Themes</b>: Redemption, unity, and self-discovery.
+                  </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="text-align:center">
+                
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 8 - Shot 1
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Sweeping shot of Elsa and Kristoff standing with the crowd, applauding Anna‘s recognition, their expressions filled with pride and joy.<br>
+                    <b>Involving Characters:</b> Elsa, Kristoff.<br>
+                    <b>Shot Type:</b> Sweeping shot. <br>
+                    <b>Camera Movement:</b> Static shot. <br>
+                    <b>Subtitle:</b> {Elsa: I'm so proud of you, Anna. Kristoff: You've truly earned this moment.}
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 8 - Shot 2
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Close-up of Anna as she is crowned queen, her expression a mix of triumph and hope, wearing the royal regalia.<br>
+                    <b>Involving Characters: </b>Anna. <br>
+                    <b>Shot Type:</b> Close-up. <br>
+                    <b>Camera Movement:</b> Static shot. <br>
+                    <b>Subtitle:</b> {Anna: I vow to lead with wisdom and kindness.}
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 9 - Shot 1
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Close-up on Elsa‘s face, her expression a mix of love and admiration for Anna.<br>
+                    <b>Involving Characters:</b> Elsa.<br>
+                    <b>Shot Type:</b> Close-up. <br>
+                    <b>Camera Movement:</b> Static shot. <br>
+                    <b>Subtitle:</b> {Elsa: You've shown me what true strength is.}
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 10 - Shot 1
+                </div>
+                
+                <div style="text-align: left; font-size: 0.65em; margin-left: 2px;">
+                    <b>Plot:</b> Wide shot of Anna and Elsa standing together on a hill, overlooking the enchanted forest and Arendelle.<br>
+                    <b>Involving Characters:</b> Elsa, Anna.<br>
+                    <b>Shot Type:</b> Wide shot. <br>
+                    <b>Camera Movement:</b> Static shot. <br>
+                    <b>Subtitle:</b> {Anna: We've come so far, and there's so much more to achieve. Elsa: Together, we'll ensure harmony for both our homes.}
+                </div>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td>
+                <video src="./static/videos/Sub-Script_3-Scene_8-Shot_1.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+              
+              <td>
+                <video src="./static/videos/Sub-Script_3-Scene_8-Shot_2.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+              <td>
+                <video src="./static/videos/Sub-Script_3-Scene_9-Shot_1.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+              <td>
+                <video src="./static/videos/Sub-Script_3-Scene_10-Shot_1.mp4" width="832" height="512" autoplay muted loop>
+                </video>
+              </td>
+            </tr>
+
+            </table>
+
+        <!-- </div> -->
+    </div>
+  </div>
+</section>
+
+<hr style="border: none; border-top: 2px solid gray; width: 100%; margin: 20px 0;">
+
+
+<!--  Task 3: Joint Generation of Movies with Audio from Script Synopses -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3"> Task 3: Joint Generation of Movies with Audio from Script Synopses</h2>
+        <!-- <p>
+          The input conditions for the HMControlModule can be generated by a head model that has the <a href="https://arkit-face-blendshapes.com/" target="_blank">ARKit Face Blendshapes</a> bound to it. So we can use ARKit blendshape values to control the generation of facial expressions.
+        </p> -->
+        <!-- <h2 class="title is-4" style="text-align: left;">Case 2: NeZha II</h2> <br> -->
+        <h2 class="title is-4" style="text-align: center;"> Case 1: Frozen II</h2>
+
+        <div class="container1">
+          <!-- Script Introduction -->
+          <div class="script-intro">
+              <p>
+                  Anna, Elsa, Kristoff, Olaf, and Mattias embark on a journey to uncover the truth behind the mysterious voice calling Elsa. 
+                  As they travel to the enchanted forest, they discover that the past holds secrets about their kingdom and Elsa’s powers. 
+                  Mattias, a loyal Arendelle soldier trapped in the forest for years, helps them navigate the tensions between Arendelle and the Northuldra people…
+              </p>
+              <h2 style="text-align: center; font-size: 1.3em;">Script Synopsis/Raw Story</h2>
+      
+          </div>
+      
+          <!-- Character Bank -->
+          <div class="character-bank">
+              <!-- Character 1 -->
+              <div class="character">
+                  <img src="static/images/Elsa.png" alt="Elsa">
+                  <audio controls>
+                      <source src="static/videos/Elsa.mp3" type="audio/mpeg">
+                      Your browser does not support the audio element.
+                  </audio>
+                  <div class="character-name">Elsa</div>
+              </div>
+      
+              <!-- Character 2 -->
+              <div class="character">
+                  <img src="static/images/Anna.png" alt="Anna">
+                  <audio controls>
+                      <source src="static/videos/Anna.mp3" type="audio/mpeg">
+                      Your browser does not support the audio element.
+                  </audio>
+                  <div class="character-name">Anna</div>
+              </div>
+      
+              <!-- Character 3 -->
+              <div class="character">
+                  <img src="static/images/Kristoff.png" alt="Kristoff">
+                  <audio controls>
+                      <source src="static/videos/Kristoff.mp3" type="audio/mpeg">
+                      Your browser does not support the audio element.
+                  </audio>
+                  <div class="character-name">Kristoff</div>
+              </div> 
+          </div>
+      
+          <!-- Caption below Character Bank -->
+        
+      
+        <div class="container3">
+          <!-- Arrow with Label -->
+          <div class="arrow-container">
+            <div class="character-caption">
+              <span style="color: red;">Input</span>: Script Synopsis and Character Bank (Image,Audio Sample, Name)
+            </div>
+            <svg width="50" height="80">
+                <line x1="25" y1="0" x2="25" y2="60" stroke="black" stroke-width="15"/>
+                <polygon points="10,60 25,80 40,60" fill="black"/>
+            </svg>
+            <div class="arrow-label">Process with MovieAgent (GPT4-o + ROICtrl +  VALL-E X + Mango Talking Human)</div>
+            <div class="character-caption">
+              <span style="color: red;">Output</span>: Multi-scene, multi-shot videos with a coherent narrative, synchronized audio.
+            </div>
+        </div>
+      </div>
+
+      
+    
+        <!-- <p style="font-size: 1.5em; text-align: center; font-weight: bold;">Scene 1</p> -->
+        
+        <!-- <div class="container"> -->
+        <table class="center" id="table5">
+
+            <!-- <tr>
+              <td colspan="2" style="text-align: center">
+                  <div style="text-align: center; font-size: 1.3em; font-weight: bold;">
+                    Sub-Script 1: The Call and the Journey Begins
+                  </div>
+                  <div style="text-align: left; font-size: 0.8em; margin-top: 1px;">
+                      <b>Plot:</b> Anna, Elsa, Kristoff, and Olaf embark on a journey toward a mysterious voice calling Elsa. Along the way, supernatural weather linked to Elsa’s emotions challenges them. In the enchanted forest, they encounter frozen relics of a past conflict between Arendelle and the Northuldra. Elsa’s magic calms elemental spirits blocking their path, and they uncover cryptic symbols tied to Elsa’s childhood memories.<br>
+                      <b>Involving Characters:</b> Elsa, Anna, Kristoff, and Olaf.<br>
+                      <b>Emotional Tone:</b> Curiosity and determination.<br>
+                      <b>Key Themes</b>: Adventure, discovery, and mystery.
+                  </div>
+              </td>
+            </tr> -->
+
+            <tr>
+              <td style="text-align:center">
+                
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 1 - Shot 1
+                </div>
+                
+                <div style="text-align: left; font-size: 0.75em; margin-left: 2px;">
+                    <b>Plot:</b> Elsa stands alone in her ice dress, listening to a mysterious, ethereal voice. Her expression is a mix of curiosity and concern as she looks towards the distant horizon.<br>
+                    <b>Involving Characters:</b> Elsa.<br>
+                    <b>Subtitle:</b> <br>
+                    <div style="margin-left: 2em;">  <!-- Indentation added -->
+                      <b>Elsa:</b> I can hear it again... the voice. It's calling me. I have to follow it... I have to know the truth.
+                    </div>
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 6 - Shot 2
+                </div>
+                
+                <div style="text-align: left; font-size: 0.75em; margin-left: 2px;">
+                    <b>Plot:</b> Group shot of Anna and Kristoff sharing a meal with representatives, smiles and nods exchanged as they reach a moment of understanding.<br>
+                    <b>Involving Characters:</b> Kristoff, Anna.<br>
+                    <div style="margin-left: 2em;">  <!-- Indentation added -->
+                      <b>Anna:</b> We can learn so much from each other. We just need to listen and work together. <br>
+                      <b>Kristoff:</b> Anna, this is dangerous. Are you sure about this? <br>
+                      <b>Anna:</b> I know it won’t be easy, but we can’t turn back now. Trust me, Kristoff. <br>
+                      <b>Kristoff:</b>You never stop surprising me... Okay, I trust you. 
+                  </div>
+                  
+                    
+                </div>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td>
+                <video poster="" id="video_expedit" controls muted loop 
+                      style="width: 800px; height: 200px;">
+                    <source src="static/videos/Sub-Script_1|Scene_1|Shot_1_audio.mp4" type="video/mp4">
+                </video>
+
+              </td>
+              
+              <td>
+                <video poster="" id="video_expedit" controls muted loop style="width: 800px; height: 200px;">
+                  <source src="static/videos/Sub-Script_2-Scene_6-Shot_2_audio.mp4"
+                  type="video/mp4">
+                </video>
+              </td>
+
+            </tr>
+
+            <tr>
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 8 - Shot 1
+                </div>
+                
+                <div style="text-align: left; font-size: 0.75em; margin-left: 2px;">
+                    <b>Plot:</b> Sweeping shot of Elsa and Kristoff standing with the crowd, applauding Anna‘s recognition, their expressions filled with pride and joy.<br>
+                    <b>Involving Characters:</b> Elsa, Kristoff.<br>
+                    <div style="margin-left: 2em;">  <!-- Indentation added -->
+                      <b>Elsa:</b> I'm so proud of you, Anna. You’ve always had the heart of a leader. Now, the world sees it too. <br>
+                      <b>Kristoff:</b> You've truly earned this moment. No one deserves it more. <br>
+                      <b>Elsa:</b> Because we’ve always known what you’re capable of. And now, so do you.
+                  </div>                 
+                </div>
+              </td>
+
+
+              <td style="text-align:center">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 8 - Shot 2
+                </div>
+                
+                <div style="text-align: left; font-size: 0.75em; margin-left: 2px;">
+                    <b>Plot:</b> Close-up of Anna as she is crowned queen, her expression a mix of triumph and hope, wearing the royal regalia.<br>
+                    <b>Involving Characters: </b>Anna. <br>
+                    <div style="margin-left: 2em;">  <!-- Indentation added -->
+                      <b>Anna:</b> I vow to lead with wisdom and kindness. <br>
+                      <b>Anna:</b> Arendelle has faced many challenges, but we have always stood strong—together. <br>
+                      <b>Anna:</b> As your queen, I promise to honor our past, protect our present, and guide us toward a bright future. <br>
+                      <b>Anna:</b> With courage, with compassion… and with all my heart. <br>
+                  </div> 
+                
+                </div>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td>
+                <video poster="" id="video_expedit" controls muted loop 
+                      style="width: 800px; height: 200px;">
+                    <source src="static/videos/Sub-Script_6|Scene_4|Shot_2_audio.mp4" type="video/mp4">
+                </video>
+
+              </td>
+              
+              <td>
+                <video poster="" id="video_expedit" controls muted loop style="width: 800px; height: 200px;">
+                  <source src="static/videos/Sub-Script_3|Scene_8|Shot_2_audio.mp4"
+                  type="video/mp4">
+                </video>
+              </td>
+
+            </tr>
+
+        </table>
+
+
+
+        <hr style="border: none; border-top: 2px dashed gray; width: 100%; margin: 20px 0;">
+
+        <!-- <p>First section of text.</p> -->
+
+        <!-- <hr style="border: 1px solid black; margin: 20px 0;"> -->
+
+
+        <!-- <br> -->
+        <h2 class="title is-4" style="text-align: left;">Case 2: NeZha II</h2> <br>
+        <!-- <h2 style="text-align: left; font-size: 1.3em;">Script Synopsis/Raw Story</h2> -->
+
+        <div class="container2">
+          <!-- Script Introduction -->
+          <div class="script-intro2">
+              <p>
+                After the catastrophe, Nezha and Aobing’s souls survived, but their bodies were on the verge of shattering. Taiyi planned to use the seven-colored lotus to restore them. However, Shenggongbao led the dragon clan and other sea demons to besiege Chentang Pass, seeking revenge on Nezha. In the fierce battle, Nezha accidentally shattered Aobing’s body. To save him, Nezha decided to travel to Yuxu Palace and take the Immortal Ascension Exam to obtain a way to revive Aobing. Before his departure, Lijing and Ladyyin bid him farewell. 
+              </p>
+              <h2 style="text-align: center; font-size: 1.3em;">Script Synopsis/Raw Story</h2>
+      
+          </div>
+      
+          <!-- Character Bank -->
+          <div class="character-bank">
+              <!-- Character 1 -->
+              <div class="character">
+                  <img src="static/images/Ne Zha.png" alt="Ne Zha">
+                  <audio controls>
+                      <source src="static/videos/Ne Zha.mp3" type="audio/mpeg">
+                      Your browser does not support the audio element.
+                  </audio>
+                  <div class="character-name">Ne Zha</div>
+              </div>
+      
+              <!-- Character 2 -->
+              <div class="character">
+                  <img src="static/images/Ao Bing.png" alt="Ao Bing">
+                  <audio controls>
+                      <source src="static/videos/Ao Bing.mp3" type="audio/mpeg">
+                      Your browser does not support the audio element.
+                  </audio>
+                  <div class="character-name">Ao Bing</div>
+              </div>
+      
+              <!-- Character 3 -->
+              <div class="character">
+                  <img src="static/images/Shenggongbao.png" alt="Shenggongbao">
+                  <audio controls>
+                      <source src="static/videos/Shenggongbao.mp3" type="audio/mpeg">
+                      Your browser does not support the audio element.
+                  </audio>
+                  <div class="character-name">Sheng GongBao</div>
+              </div> 
+          </div>
+      
+          <!-- Caption below Character Bank -->
+        
+      
+        <div class="container3">
+          <!-- Arrow with Label -->
+          <div class="arrow-container">
+            <div class="character-caption">
+              <span style="color: red;">Input</span>: Script Synopsis and Character Bank (Image,Audio Sample, Name)
+            </div>
+            <svg width="50" height="80">
+                <line x1="25" y1="0" x2="25" y2="60" stroke="black" stroke-width="15"/>
+                <polygon points="10,60 25,80 40,60" fill="black"/>
+            </svg>
+            <div class="arrow-label">Process with MovieAgent (GPT4-o + ROICtrl +  VALL-E X + Mango Talking Human)</div>
+            <div class="character-caption">
+              <span style="color: red;">Output</span>: Multi-scene, multi-shot videos with a coherent narrative, synchronized audio.
+            </div>
+        </div>
+      </div>
+
+      
+    
+        <!-- <p style="font-size: 1.5em; text-align: center; font-weight: bold;">Scene 1</p> -->
+        
+        <!-- <div class="container"> -->
+        <table class="center" id="table5">
+
+            <!-- <tr>
+              <td colspan="2" style="text-align: center">
+                  <div style="text-align: center; font-size: 1.3em; font-weight: bold;">
+                    Sub-Script 1: The Call and the Journey Begins
+                  </div>
+                  <div style="text-align: left; font-size: 0.8em; margin-top: 1px;">
+                      <b>Plot:</b> Anna, Elsa, Kristoff, and Olaf embark on a journey toward a mysterious voice calling Elsa. Along the way, supernatural weather linked to Elsa’s emotions challenges them. In the enchanted forest, they encounter frozen relics of a past conflict between Arendelle and the Northuldra. Elsa’s magic calms elemental spirits blocking their path, and they uncover cryptic symbols tied to Elsa’s childhood memories.<br>
+                      <b>Involving Characters:</b> Elsa, Anna, Kristoff, and Olaf.<br>
+                      <b>Emotional Tone:</b> Curiosity and determination.<br>
+                      <b>Key Themes</b>: Adventure, discovery, and mystery.
+                  </div>
+              </td>
+            </tr> -->
+
+            <tr>
+              <td style="text-align:center">
+                
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 1 - Shot 1
+                </div>
+                
+                <div style="text-align: left; font-size: 0.75em; margin-left: 2px;">
+                    <b>Plot:</b> Ne Zha and Ao Bing discuss how to restore their bodies in a vibrant, colorful forest.<br>
+                    <b>Involving Characters:</b> Ne Zha, Ao Bing.<br>
+                    <div style="margin-left: 2em;">  <!-- Indentation added -->
+                      <b>Ne Zha:</b> Our bodies... we can’t stay like this forever. There must be a way to restore them. <br>
+                      <b>Ao Bing:</b> The Yuxu Palace holds countless ancient treasures. Perhaps one of them can heal us. <br>
+                      <b>Ne Zha:</b> Yuxu Palace? That place isn’t exactly welcoming. <br>
+                      <b>Ao Bing:</b> It’s our best chance. If we don’t try, we’ll never know. <br>
+                      <b>Ne Zha:</b> Fine. But if we get caught, you’re doing the talking. <br>
+                  </div>                             
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 2 - Shot 5
+                </div>
+                
+                <div style="text-align: left; font-size: 0.75em; margin-left: 2px;">
+                    <b>Plot:</b> Sheng Gongbao appears in a confrontational stance, intent on attacking Chentang Pass and assassinating Nezha.<br>
+                    <b>Involving Characters:</b> Sheng Gongbao.<br>
+                    <b>Subtitle:</b> <br>
+                    <div style="margin-left: 2em;">  <!-- Indentation added -->
+                      <b>Sheng Gongbao:</b> I won't let you succeed! I've come too far to be stopped now. <br>
+                      <b>Sheng Gongbao:</b> Nezha, you are but a child playing with fire. <br>
+                      <b>Sheng Gongbao:</b> Step aside, or be burned by it.
+                    </div>
+                </div>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td>
+                <video poster="" id="video_expedit" controls muted loop 
+                      style="width: 800px; height: 200px;">
+                    <source src="static/videos/Sub-Script_1-Scene_1-Shot_1-audio-nehza.mp4" type="video/mp4">
+                </video>
+
+              </td>
+              
+              <td>
+                <video poster="" id="video_expedit" controls muted loop style="width: 800px; height: 200px;">
+                  <source src="static/videos/Sub-Script_1|Scene_2|Shot_5-audio-nehza.mp4"
+                  type="video/mp4">
+                </video>
+              </td>
+
+            </tr>
+
+            <tr>
+              <td style="text-align:center;">
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 4 - Shot 3
+                </div>
+                
+                <div style="text-align: left; font-size: 0.75em; margin-left: 2px;">
+                  <b>Plot:</b> Li Jing offers words of encouragement to Ne Zha, believing that he can successfully retrieve the elixir from Yuxu Palace to save his friend.<br>
+                  <b>Involving Characters:</b> Ne Zha, Li Jing.<br>
+                  <b>Subtitle:</b> <br>
+                  <div style="margin-left: 2em;">  <!-- Indentation added -->
+                    <b>Li Jing:</b> Don't be too sad. Believe in yourself—you can definitely save your friend. Then return to us safely. <br>
+                    <b>Ne Zha:</b> Thank you, Dad. I think I need a bit more time to process my emotions. 
+                  </div>               
+                </div>
+              </td>
+
+
+              <td style="text-align:center">
+                
+                <div style="text-align: center; font-size: 1.0em; font-weight: bold;">
+                  Scene 5 - Shot 5
+                </div>
+                
+                <div style="text-align: left; font-size: 0.75em; margin-left: 2px;">
+                    <b>Plot:</b> Ne Zha sneaks into Yuxu Palace, searching for the elixir. However, the palace is vast, and as he navigates its endless corridors, he unknowingly steps into a mysterious chamber.<br>
+                    <b>Involving Characters:</b> Ne Zha.<br>
+                    <b>Subtitle:</b> <br>
+                    <div style="margin-left: 2em;">  <!-- Indentation added -->
+                      <b>Ne Zha:</b> So this is Yuxu Palace… Hmph, not as scary as the legends say. <br>
+                      <b>Ne Zha:</b> Alright, time to find that elixir and get out before someone decides I’m an intruder.
+                    </div>
+                </div>
+              </td>
+            </tr>
+
+
+            <tr>
+              <td>
+                <video poster="" id="video_expedit" controls muted loop 
+                      style="width: 800px; height: 200px;">
+                    <source src="static/videos/Sub-Script_1-Scene_3-Shot_3-audio-nehza.mp4" type="video/mp4">
+                </video>
+
+              </td>
+              
+              <td>
+                <video poster="" id="video_expedit" controls muted loop style="width: 800px; height: 200px;">
+                  <source src="static/videos/Sub-Script_1|Scene_5|Shot_4-audio-nehza1.mp4"
+                  type="video/mp4">
+                </video>
+              </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+  </div>
+
+
+
+
+
+  
+
+</section>
+<!-- End Exp Edit -->
+
+
+
+<!-- BibTex citation -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@misc{wu2024moviebenchhierarchicalmovielevel,
+      title={MovieBench: A Hierarchical Movie Level Dataset for Long Video Generation}, 
+      author={Weijia Wu and Mingyu Liu and Zeyu Zhu and Xi Xia and Haoen Feng and Wen Wang and Kevin Qinghong Lin and Chunhua Shen and Mike Zheng Shou},
+      year={2024},
+      eprint={2411.15262},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2411.15262}, 
+}</code></pre>
+  </div>
+</section>
+<!--End BibTex citation -->
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+            <p>
+            If you have any copyright concerns regarding these materials, please contact us at (weijiawu96@gmail.com), and we will address the issue promptly.
+          </p>
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+
+
+  </body>
+  </html>
